@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oppgave 1</title>
+    <style>
+        nav {
+            display: flex;
+            justify-content: center;
+        }
+
+        nav img{
+            border: 1px solid lightsteelblue;
+            transition: 0.25s;
+            flex-basis: 200px;
+            flex-grow: 0;
+        }
+
+        nav img:hover{
+            transform: scale(1.1);
+        }
+
+        .partiInfo{
+            display: none;
+        }
+    </style>
+    <div class="partiInfo" id="info"></div>
+    <div class="partiInfo" id="ap"></div>
+    <div class="partiInfo" id="frp"></div>
+    <div class="partiInfo" id="hoyre"></div>
+    <div class="partiInfo" id="krf"></div>
+    <div class="partiInfo" id="mdg"></div>
+    <div class="partiInfo" id="piratpartiet"></div>
+    <div class="partiInfo" id="sp"></div>
+    <div class="partiInfo" id="sv"></div>
+    <div class="partiInfo" is="venstre"></div>
+</head>
+<body>
+<nav>
+</nav>
+<script>
+
+    let partier = ["ap", "frp", "hoyre", "krf", "mdg", "piratpartiet", "sp", "sv", "venstre"];
+
+    // Lager noen dynamiske elementer på nettsiden
+    function setUp(){
+        let nav = document.querySelector("nav");
+
+        for (let i = 0; i < partier.length; i++) {
+            parti = partier[i];
+
+            nav.innerHTML += `<img src="bilder/${parti}.png" onclick="visParti('${parti}')">`;
+        }
+    }
+
+
+    window.onload = setUp;
+
+</script>
+
+</body>
+</html>

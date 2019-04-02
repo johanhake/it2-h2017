@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/brukerinput.css">
+    <title>Oppgave 3</title>
+    <style>
+        body{
+            font-family: Verdana, sans-serif;
+        }
+        #login{
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        #loginBeskjed{
+            position: relative;
+            transform: translateY(-4em);
+            display: none;
+            background-color: pink;
+
+        }
+
+        #partiene{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        #bekreftelse{
+            position: relative;
+            text-align: center;
+            display: none;
+            height: 12em;
+            transform: translateY(-12em);
+            background-color: #5588AA;
+            color: white;
+            text-shadow: 0 -1px 1px #335166;
+            padding: 1em;
+            border-radius: 5px;
+        }
+
+        main{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="login">
+    <h1>Velkommen til skolevalg!</h1>
+    <label for="inpPassord">Skriv et passord</label>
+    <input id="inpPassord"
+           type="password"
+           onchange="sjekkPassord(event)">
+    <div id="loginBeskjed">
+        <h3>Feil passord forsøk igjen!</h3>
+    </div>
+</div>
+<main>
+<h2>Avgi din stemme</h2>
+    <div id="partiene"></div>
+    <div id="bekreftelse">
+        <h3>Vil du gi din stemme til:</h3>
+        <h4 id="bekreftStemme"></h4>
+        <button onclick="bekreft('ja')">Ja</button>
+        <button onclick="bekreft('nei')">Nei</button>
+    </div>
+</main>
+<footer>
+    <button onclick="sjekkResultat()">Sjekk resultat</button>
+    <table>
+        <thead><th>Parti</th><th>Resultat</th><th>Endring</th></thead>
+        <tbody></tbody>
+    </table>
+</footer>
+<script>
+
+    // Passordene
+    let passordTabell = [];
+    let antallPassord = 10;
+
+    // Partiene med stemmer
+    let partiene = {
+        ap: {navn: "Arbeiderpartiet", stemmer: 0},
+        sv: {navn: "Sosialistisk Venstreparti", stemmer: 0},
+        sp: {navn: "Senterpartiet", stemmer: 0},
+        mdg: {navn: "Miljøpartiet de grønne", stemmer: 0},
+        frp: {navn: "Fremskrittspartiet", stemmer: 0},
+        krf: {navn: "Kristelig Folkeparti", stemmer: 0},
+        h: {navn: "Høyre", stemmer: 0},
+        v: {navn: "Venstre", stemmer: 0},
+        r: {navn: "Rødt", stemmer: 0},
+        pirat: {navn: "Piratpartiet", stemmer: 0}
+    };
+
+    let tidligereResultat = {
+        ap: 23.0,
+        sv: 5.0,
+        sp: 4.2,
+        mdg: 3.8,
+        frp: 15.6,
+        krf: 2.8,
+        h: 28.2,
+        v: 6.7,
+        r: 3.7,
+        pirat: 4.3,
+
+    }
+
+    let avgittStemme;
+
+    // Setter opp ting første gang siden lastes
+    function setup(){
+
+        // DOM
+        let partieneDiv = document.querySelector("#partiene");
+
+        for (let parti in partiene) {
+            partieneDiv.innerHTML += `
+                <button onclick="avgiStemme('${parti}')">
+                   ${partiene[parti].navn}
+                </button>`
+        }
+
+        // Fyller passordtabellen med passord
+        for (let i = 0; i < antallPassord; i++) {
+            passordTabell.push("Passord" + ("000"+i).slice(-3));
+        }
+    }
+
+    // Sjekker passord
+    function sjekkPassord(event){
+        let passord = event.target.value;
+        event.target.value = "";
+
+        if(passordTabell.indexOf(passord)===-1){
+            document.querySelector("#loginBeskjed").style.display = "block";
+            setTimeout(function(){
+                document.querySelector("#loginBeskjed").style.display = "none";
+            }, 500);
+        }else{
+            document.querySelector("main").style.display = "block";
+            document.querySelector("#login").style.display = "none";
+            passordTabell.splice(passordTabell.indexOf(passord), 1);
+        }
+    }
+
+    // Avgir en enkelt stemme
+    function avgiStemme(parti){
+
+        // Lagrer stemme i global variabel
+        avgittStemme = parti;
+
+        // Gjør bekreft knappene synlige
+        document.querySelector("#bekreftelse").style.display = "block";
+
+        // Endrer tekst i spørsmål
+        document.querySelector("#bekreftStemme").innerHTML = partiene[parti].navn;
+
+    }
+
+    // Bekrefter eller avkrefter stemmer
+    function bekreft(svar){
+        // Tar bort bekreft diven
+        document.querySelector("#bekreftelse").style.display = "none";
+        if (svar==='ja'){
+            partiene[avgittStemme].stemmer++;
+            nyStemming();
+        }
+    }
+
+    // Prepper siden for å stemme på nytt
+    function nyStemming(){
+        document.querySelector("#login").style.display = "block";
+        document.querySelector("main").style.display = "none";
+    }
+
+
+    // Går igjennom resultatene og lager et resultat
+    function sjekkResultat(){
+
+        // DOM
+        let tbody = document.querySelector("footer tbody");
+
+        let sumStemmer = 0;
+        for(let parti in partiene){
+            sumStemmer += partiene[parti].stemmer;
+        }
+
+        // Beregner og viser stemmene
+        for(let parti in partiene){
+            let prosent = partiene[parti].stemmer/sumStemmer*100;
+            tbody.innerHTML +=`<tr>
+                <td>${partiene[parti].navn}</td>
+                <td>${prosent.toFixed(1)}</td>
+                <td>${(prosent-tidligereResultat[parti]).toFixed(1)}</td>
+                </tr>`;
+        }
+    }
+
+    window.onload = setup;
+
+</script>
+</body>
+</html>
