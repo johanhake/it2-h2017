@@ -9,6 +9,8 @@ I dette løsningsforslaget har jeg forsøkt å være konsekvent. Det bruker en g
 ## De ferdige løsningene ser slik ut:
 * [Oppgave 1](https://johanhake.github.io/it2-h2017/oppgave1.html)
 
+* [Oppgave 2](https://johanhake.github.io/it2-h2017/oppgave2.html)
+
 * [Oppgave 3](https://johanhake.github.io/it2-h2017/oppgave3.html)
 
 ## Tilleggsoppgaver

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oppgave 2</title>
+    <link rel="stylesheet" href="css/brukerinput.css">
+    <style>
+        body{
+            font-family: Verdana, sans-serif;
+        }
+
+        main{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        main h1{
+            grid-column: span 2;
+            text-align: center;
+        }
+
+        #skjema{
+            width: 300px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            grid-gap: 1em;
+        }
+
+        #skjema label{
+            margin: 0;
+            text-align: right;
+        }
+
+        #skjema input{
+            margin: 0;
+        }
+
+        #skjema h3{
+            grid-column: span 2;
+        }
+
+        #grafikk{
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 8em 1fr 1.5em;
+            grid-gap: 1em;
+            align-items: end;
+        }
+
+        #overskriftBlokk{
+            grid-column: span 2;
+        }
+
+        .soeyle{
+            border: solid black 2px;
+            flex-grow: 1;
+        }
+
+        #borgerlig{
+            background-color: #1c0adf;
+        }
+
+        #rød-grønn{
+            background-image: linear-gradient(red, limegreen);
+        }
+
+
+    </style>
+</head>
+<body>
+<main>
+    <h1>Partibarometer</h1>
+    <form id="skjema" onsubmit="registrer(event)">
+        <h3>Skriv inn hvor stor oppslutning de ulike partiene har fått</h3>
+
+    </form>
+    <div id="grafikk">
+        <div id="overskriftBlokk">
+            <h3>Blokk-størrelser</h3>
+            <div id="størstBlokk"></div>
+            <div id="statestikk"></div>
+        </div>
+        <div class="soeyle" id="borgerlig"></div>
+        <div class="soeyle" id="rød-grønn"></div>
+        <label>Borgerlig</label>
+        <label>Rød-grønn</label>
+
+    </div>
+</main>
+
+<script>
+    // Liste med de ulike partiene
+    let partier = ["Ap", "SV", "Sp", "FrP", "Høyre", "Venstre", "KrF", "Mdg", "Pirat", "Rødt"];
+
+    let blokker = {
+        borgerlig: ["FrP", "Høyre", "Venstre", "KrF"],
+        "rød-grønn": ["Ap", "SV", "Sp"]
+    };
+
+    let tidligereResultat = {
+        Ap: 23.0,
+        SV: 5.0,
+        Sp: 4.2,
+        Mdg: 3.8,
+        FrP: 15.6,
+        KrF: 2.8,
+        Høyre: 28.2,
+        Venstre: 6.7,
+        Rødt: 3.7,
+        Pirat: 4.3,
+    };
+
+
+    // Prepper siden
+    function setup(){
+        let skjema = document.querySelector("#skjema");
+        for (let i = 0; i < partier.length; i++) {
+            skjema.innerHTML += `<label for="inp${partier[i]}">${partier[i]}</label>
+                                   <input type="number" min="0" step="0.1" value="0.0" id="inp${partier[i]}">`;
+        }
+        skjema.innerHTML += `<button type="submit">Registrer</button>
+                             <button onclick="plottBlokker(tidligereResultat)"  type="button">Bruk testdata</button>`;
+    }
+
+    // Registrerer nye data
+    function registrer(event){
+        event.preventDefault();
+
+        let alleInput = document.querySelectorAll("input[type=number]");
+        let stemmer = {};
+
+        for (let i = 0; i < alleInput.length; i++) {
+            stemmer[partier[i]] = Number(alleInput[i].value);
+        }
+
+        // Sletter innlagde data.
+        event.target.reset();
+
+        // Plotter stemme-dataene
+        plottBlokker(stemmer);
+
+    }
+
+    // Plotter blokkene
+    function plottBlokker(data){
+
+
+        // DOM
+        let grafikkDiv = document.querySelector("#grafikk");
+
+        // Bruker høyden på kontainer-elementet for å sette maks høyde på søylene
+        let grafikkHoeyde = grafikkDiv.offsetHeight*0.6;
+
+        let blokkStemmer = {
+            borgerlig: 0,
+            "rød-grønn": 0,
+
+        };
+
+        let maks = -100;
+        let stoerstBlokk;
+
+        for (let blokk in blokker){
+
+            for (let i = 0; i < blokker[blokk].length; i++) {
+                let parti = blokker[blokk][i];
+                blokkStemmer[blokk] += data[parti];
+            }
+            if (blokkStemmer[blokk]>maks){
+                maks = blokkStemmer[blokk];
+                stoerstBlokk = blokk;
+            }
+        }
+        console.log(blokkStemmer);
+
+        if (maks<=0){
+            return;
+        }
+
+
+        document.querySelector("#grafikk").style.display = "grid"
+
+        // Går igjennom blokkene og setter høyde på søylene
+        for (let blokk in blokker) {
+            let hoeyde = grafikkHoeyde*blokkStemmer[blokk]/maks;
+            console.log(hoeyde);
+            document.querySelector(`#${blokk}`).style.height = `${hoeyde}px`;
+        }
+
+        document.querySelector("#størstBlokk").innerHTML = `<b>${stoerstBlokk}</b> er det største blokken.`;
+        document.querySelector("#statestikk").innerHTML = `Forskjellen mellom blokkene er ${Math.abs(blokkStemmer["borgerlig"]-blokkStemmer["rød-grønn"]).toFixed(1)} prosent poeng`;
+    }
+
+    window.onload = setup;
+</script>
+</body>
+</html>

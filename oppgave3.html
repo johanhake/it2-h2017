@@ -68,7 +68,7 @@
 <footer>
     <button onclick="sjekkResultat()">Sjekk resultat</button>
     <table>
-        <thead><th>Parti</th><th>Resultat</th><th>Endring</th></thead>
+        <thead></thead>
         <tbody></tbody>
     </table>
 </footer>
@@ -104,7 +104,7 @@
         r: 3.7,
         pirat: 4.3,
 
-    }
+    };
 
     let avgittStemme;
 
@@ -144,7 +144,7 @@
         }
     }
 
-    // Avgir en enkelt stemme
+    // Avgir en enkeltstemme
     function avgiStemme(parti){
 
         // Lagrer stemme i global variabel
@@ -180,11 +180,20 @@
 
         // DOM
         let tbody = document.querySelector("footer tbody");
+        let thead = document.querySelector("footer thead");
 
         let sumStemmer = 0;
         for(let parti in partiene){
             sumStemmer += partiene[parti].stemmer;
         }
+
+        if (sumStemmer===0){
+            return;
+        }
+
+        // Fyller tabellen
+        thead.innerHTML = "<tr><th>Parti</th><th>Resultat</th><th>Endring</th></tr>"
+        tbody.innerHTML = "";
 
         // Beregner og viser stemmene
         for(let parti in partiene){
