@@ -3,58 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <title>Oppgave 1</title>
+    <link rel="shortcut icon" href="#">
+
     <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
         nav {
-            display: flex;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
         }
 
         nav img{
             border: 1px solid lightsteelblue;
-            transition: 0.25s;
-            flex-basis: 200px;
-            flex-grow: 0;
+            transition: 0.15s;
+            width: 100%;
         }
 
         nav img:hover{
             transform: scale(1.1);
+            z-index: 100;
         }
 
-        .partiInfo{
-            display: none;
+        #parti-info h3{
+            text-align: center;
         }
+
+        #parti-info > *{
+            display: block;
+            margin: 50px auto;
+        }
+
+        #innpakning {
+            overflow: hidden;
+            width: 320px;
+            height: 240px;
+            border: darkred 8px solid;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        #innpakning img {
+            position: absolute;
+            width: 320px;
+            height: 240px;
+            left: -320px;
+        }
+
     </style>
 
 </head>
 <body>
-<nav>
-    <div class="partiInfo" id="info"></div>
-    <div class="partiInfo" id="ap"></div>
-    <div class="partiInfo" id="frp"></div>
-    <div class="partiInfo" id="hoyre"></div>
-    <div class="partiInfo" id="krf"></div>
-    <div class="partiInfo" id="mdg"></div>
-    <div class="partiInfo" id="piratpartiet"></div>
-    <div class="partiInfo" id="sp"></div>
-    <div class="partiInfo" id="sv"></div>
-    <div class="partiInfo" is="venstre"></div>
-</nav>
-<h1>NB! Ikke ferdig!</h1>
+<nav></nav>
+<div id="parti-info">
+
+</div>
 <script>
 
     let partier = ["ap", "frp", "hoyre", "krf", "mdg", "piratpartiet", "sp", "sv", "venstre"];
 
-    // Lager noen dynamiske elementer på nettsiden
+    let partiInfo = {
+        ap:{
+            navn: "Arbeiderpartiet",
+            bilder: [],
+            lyd: "",
+            video: ""
+        },
+        frp:{
+            navn: "Fremskrittpariet",
+            bilder: [],
+            lyd: "",
+            video: ""
+        },
+        hoyre:{
+            navn: "Høyre",
+            bilder: [],
+            lyd: "",
+            video: ""
+        },
+        krf:{
+            navn: "Kristelig folkeparti",
+            bilder: [],
+            lyd: "",
+            video: ""
+        },
+        mdg:{
+            navn: "Miljøpartiet",
+            bilder: ["mdg-bildegalleri01.jpg", 
+                     "mdg-bildegalleri02.jpg",
+                     "mdg-bildegalleri03.jpg"],
+            lyd: "piano.mp3",
+            video: ""
+        },
+        piratpartiet:{
+            navn: "Piratpartiet",
+            bilder: [],
+            lyd: "",
+            video: ""
+        },
+        sp:{
+            navn: "Senterpartiet",
+            bilder: [],
+            lyd: "",
+            video: "senterpartiet.mp4"
+        },
+        sv:{
+            navn: "Sosialistisk venstreparti",
+            bilder: [],
+            lyd: "",
+            video: ""
+        },
+        venstre:{
+            navn: "Venstre",
+            bilder: [],
+            lyd: "",
+            video: ""
+        },
+    };
+
+    // Lager navbaren
     function setUp(){
         let nav = document.querySelector("nav");
 
         for (let i = 0; i < partier.length; i++) {
-            parti = partier[i];
-
-            nav.innerHTML += `<img src="bilder/${parti}.png" onclick="visParti('${parti}')">`;
+            nav.innerHTML += `<img src="bilder/${partier[i]}.png" onclick="visParti('${partier[i]}')">`;
         }
     }
 
+    // Lytterfunksjon som viser hver enkelt parti
+    function visParti(parti){
+        let infoDiv = document.querySelector("#parti-info");
+
+        infoDiv.innerHTML = `<h3>${partiInfo[parti].navn}</h3>`;
+        infoDiv.innerHTML += `<img src="bilder/${parti}.png">`;
+
+        // Skal vi ha noen video?
+        if (partiInfo[parti].video != ""){
+            infoDiv.innerHTML += `<video src="video/${partiInfo[parti].video}" controls></video>`;
+        }
+
+        // Skal vi ha noe lyd?
+        if(partiInfo[parti].lyd != ""){
+            infoDiv.innerHTML += `<audio src="lyd/${partiInfo[parti].lyd}" autoplay loop></audio>`;
+        }
+
+        // Skal vi ha noe bildegalleri?
+        if(partiInfo[parti].bilder.length > 0){
+            bildeKarusell = true;
+            let bildeInnpakning = document.createElement("div");
+            bildeInnpakning.id = "innpakning";
+            console.log(partiInfo[parti]);
+            for (bilde of partiInfo[parti].bilder){
+                bildeInnpakning.innerHTML += `<img src="bilder/${bilde}">`;
+            }
+            infoDiv.appendChild(bildeInnpakning);
+            bildeListe = document.querySelectorAll("#innpakning img");
+            bildeIndeks = 0;
+            flytt();
+        }else{
+            bildeKarusell = false;
+        }
+    }
+
+    // Kode hentet fra skliInnSkliUt5 eksempelet fra IT2-timen
+    
+    // Variabler for bilde-animasjonen
+    const bildeBredde = 320;
+    let bildeListe;
+    let bildeKarusell = false;
+    let bildeIndeks;
+    const tid = 3000;
+    const timing = {
+        duration: tid/3,
+        easing: "ease-in-out",
+        fill: "forwards"
+    };
+
+    let innFraHoyre = [
+        { left: `${bildeBredde}px`},
+        { left: 0}
+    ];
+
+    let utTilVenstre = [
+        { left: 0},
+        { left: `${-bildeBredde}px`}
+    ];
+
+    // Flytter bildene et hakk til venstre
+    function flytt(){
+
+        // Hvis vi ikke har noen bildekarusell skal vi heller ikke vise noe
+        if (!bildeKarusell){
+            return;
+        }
+
+        bildeListe[bildeIndeks].animate(utTilVenstre, timing);
+        bildeIndeks = (bildeIndeks + 1) % bildeListe.length;
+        bildeListe[bildeIndeks].animate(innFraHoyre, timing);
+
+        setTimeout(flytt, tid);
+    }
 
     window.onload = setUp;
 

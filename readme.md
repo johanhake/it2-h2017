@@ -8,9 +8,13 @@ I dette løsningsforslaget har jeg forsøkt å være konsekvent. Det bruker en g
 
 ## De ferdige løsningene ser slik ut:
 * [Oppgave 1](https://johanhake.github.io/it2-h2017/oppgave1.html)
-
 * [Oppgave 2](https://johanhake.github.io/it2-h2017/oppgave2.html)
-
 * [Oppgave 3](https://johanhake.github.io/it2-h2017/oppgave3.html)
 
 ## Tilleggsoppgaver
+### Flytdiagram
+![flytdiagram](flytdiagram.png)
+### Testplan
+1. Tester å skrive inn oppslutning til bare et av partiene i hver blokk og sjekker at jeg får riktig resultat
+2. Tester at ikke resultatet endrer seg når jeg skriver inn oppslutning for partier som ikke er med i noe blokk: mdg, piratpartiet
+3. Sjekker at vi får riktig resultat når vi bruker testresultatet

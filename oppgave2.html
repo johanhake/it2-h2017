@@ -111,7 +111,6 @@
         Pirat: 4.3,
     };
 
-
     // Prepper siden
     function setup(){
         let skjema = document.querySelector("#skjema");
@@ -145,9 +144,9 @@
     // Plotter blokkene
     function plottBlokker(data){
 
-
         // DOM
         let grafikkDiv = document.querySelector("#grafikk");
+        grafikkDiv.style.display = "grid"
 
         // Bruker høyden på kontainer-elementet for å sette maks høyde på søylene
         let grafikkHoeyde = grafikkDiv.offsetHeight*0.6;
@@ -155,7 +154,6 @@
         let blokkStemmer = {
             borgerlig: 0,
             "rød-grønn": 0,
-
         };
 
         let maks = -100;
@@ -177,9 +175,7 @@
         if (maks<=0){
             return;
         }
-
-
-        document.querySelector("#grafikk").style.display = "grid"
+        console.log("maks",maks);
 
         // Går igjennom blokkene og setter høyde på søylene
         for (let blokk in blokker) {
